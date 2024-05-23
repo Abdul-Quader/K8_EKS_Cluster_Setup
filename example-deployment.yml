@@ -1,0 +1,19 @@
+apiVersion: apps/v1     # Kubernetes API version for deployments
+kind: Deployment        # Kind of resource we're defining
+metadata:
+  name: hello-world     # Name of our deployment
+spec:
+  replicas: 1           # Number of pods (application instances) to run
+  selector:             # Selector for pods that belong to this deployment
+    matchLabels:
+      app: hello-world  # Label to identify pods
+  template:             # Pod template for our deployment
+    metadata:
+      labels:           # Labels for the pods
+        app: hello-world
+    spec:
+      containers:       # Container definition within the pod
+      - name: hello-world       # Name of the container
+        image: nginx:latest       # Docker image to use (pre-built Nginx server)
+        ports:          # Ports exposed by the container
+        - containerPort: 80       # Expose container port 80
