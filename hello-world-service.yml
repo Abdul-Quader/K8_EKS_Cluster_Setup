@@ -1,0 +1,11 @@
+apiVersion: v1       # Kubernetes API version for services
+kind: Service       # Kind of resource we're defining
+metadata:
+  name: hello-world-service        # Name of our service
+spec:
+  selector:          # Selector for pods to route traffic to
+    app: hello-world          # Matches pods with the label `app: hello-world`
+  type: LoadBalancer          # Service type (can be changed to NodePort for internal access)
+  ports:            # Ports exposed by the service
+  - port: 80           # Service port (matches container port)
+    targetPort: 80         # Target port on the pods
