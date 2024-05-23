@@ -77,7 +77,85 @@ JSON
 
 Use the AWS Management Console or the AWS CLI to create a VPC with subnets for your worker nodes. This step might involve multiple commands depending on your desired VPC configuration.
 
-**1.3 EKS Cluster Creation:**
+
+**1.3 Setting up to use AWS EKS Cluster**
+
+**1.3.1 Configure the AWS CLI**
+
+After installing the AWS CLI, do the following steps to configure it.
+In a terminal window, enter the following command:
+~~~
+$ aws configure
+~~~
+Optionally, you can configure a named profile, such as --profile cluster-admin. If you configure a named profile in the AWS CLI, you must always pass this flag in subsequent commands.
+Enter your AWS credentials. For example:
+~~~
+AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+Default region name [None]: region-code
+Default output format [None]: json
+~~~
+
+**1.3.2 Get Security Token**
+
+~~~
+$ aws sts get-session-token --duration-seconds 3600
+~~~
+This command returns the temporary security credentials for an AWS CLI session. You should see the following response output:
+~~~
+{
+    "Credentials": {
+        "AccessKeyId": "ASIA5FTRU3LOEXAMPLE",
+        "SecretAccessKey": "JnKgvwfqUD9mNsPoi9IbxAYEXAMPLE",
+        "SessionToken": "VERYLONGSESSIONTOKENSTRING",
+        "Expiration": "2023-02-17T03:14:24+00:00"
+    }
+}
+~~~
+
+**1.3.3 To verify the user identity**
+
+~~~
+$ aws sts get-caller-identity
+~~~
+This command returns the Amazon Resource Name (ARN) of the IAM entity that's configured for the AWS CLI. You should see the following example response output:
+~~~
+{
+    "UserId": "AKIAIOSFODNN7EXAMPLE",
+    "Account": "01234567890",
+    "Arn": "arn:aws:iam::01234567890:user/ClusterAdmin"
+}
+~~~
+
+**1.3.4 Install eksctl**
+
+https://eksctl.io/installation/ 
+
+**To download the latest release.**
+~~~
+# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+
+# (Optional) Verify checksum
+curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+
+tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+
+sudo mv /tmp/eksctl /usr/local/bin
+~~~
+
+**1.3.5 Shell Completion¶**
+
+Bash¶
+To enable bash completion, run the following, or put it in ~/.bashrc or ~/.profile:
+~~~
+$ . <(eksctl completion bash)
+~~~
+
+**1.4 EKS Cluster Creation:**
 
 We'll use eksctl (install it following the guide at <https://docs.aws.amazon.com/eks/latest/userguide/setting-up.html>) to create the EKS cluster. Here's an example command:
 
@@ -94,6 +172,8 @@ eksctl create cluster \
   --subnets <SUBNET_ID1>,<SUBNET_ID2>  # Replace with subnet IDs from your VPC
   --region <REGION>  # Replace with your AWS region
 ~~~
+
+**NOTE**: It creates a NAT gateway and EIP association. IT COSTS!! Please delete NAT gateway and release EIPs after task accomplishment.
 
 **2\. Configuring YAML files for Deployment:**
 
