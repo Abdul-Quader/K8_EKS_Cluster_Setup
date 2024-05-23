@@ -141,6 +141,24 @@ spec:
     targetPort: 80 # Target port on the pods
 ~~~
 
+**Applying the YAML Files:**
+
+1\.	Open a terminal window.
+
+2\.	Navigate to the directory where you saved your YAML files (e.g., example-deployment.yaml and hello-world-service.yaml).
+
+3\.	Use the following command to apply each YAML file separately:
+Bash
+~~~
+kubectl apply -f <filename.yaml>
+~~~
+**Applying Multiple Files:**
+You can apply multiple YAML files sequentially using the same command:
+Bash
+~~~
+kubectl apply -f example-deployment.yaml -f hello-world-service.yaml
+~~~
+
 **3\. Deploying the Application and Service:**
 
 After applying the YAML files, wait a few minutes for your pods and service to become ready. You can monitor the process using:
