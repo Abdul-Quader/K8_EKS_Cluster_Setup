@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v2beta2 # Kubernetes API version for HPAs
+kind: HorizontalPodAutoscaler # Kind of resource we're defining
+metadata:
+  name: hello-world-hpa # Name of our HPA
+spec:
+  scaleTargetRef: # Reference to the deployment to scale
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello-world
+  minReplicas: 1 # Minimum number of replicas allowed
+  maxReplicas: 5 # Maximum number of replicas allowed
+  metrics: # Metrics to monitor for scaling
+  - type: Resource # Metric type
+    resource:
+      name: cpu # Monitor CPU usage
+      target: # Target utilization for the metric
+        type: Utilization
+        averageUtilization: 80 # Scale up if CPU usage exceeds 80%
